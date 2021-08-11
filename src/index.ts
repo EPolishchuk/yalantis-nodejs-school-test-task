@@ -1,7 +1,12 @@
-import express from "express";
+import express from 'express';
+import { APP_PORT } from './config';
+import { register, user } from './routes';
 
 const app = express();
 
-app.get('/', (req, res) => res.json({message: 'Works'}));
+app.use(express.json());
 
-app.listen(3000, () => console.log(`http://localhost:${3000}`));
+app.use(register);
+app.use(user);
+
+app.listen(APP_PORT, () => console.log(`http://localhost:${APP_PORT}`));
