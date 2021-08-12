@@ -7,7 +7,7 @@ import {
 } from '../validation';
 import multer from 'multer';
 import shortid from 'shortid';
-import { pool } from '../config';
+import { addUser, userExist } from '../db';
 
 const router = Router();
 const storage = multer.memoryStorage();
@@ -24,18 +24,19 @@ router.post('/register', upload.single('photo'), async (req, res) => {
       await isImage(buffer);
     }
 
-    const id = shortid.generate();
-    await resizeSaveImage(buffer, id);
-    const { email, firstName, lastName } = req.body;
+    const photoId = shortid.generate();
+    await resizeSaveImage(buffer, photoId);
+    req.body.photo = photoId;
 
-    res.json({
-      message: {
-        email: email,
-        firstName: firstName,
-        lastName: lastName,
-        photo: id,
-      },
-    });
+    let isUserExist = await userExist(req.body.email);
+    if (isUserExist) {
+      res.json({
+        message: `User with email ${req.body.email} is already exist`,
+      });
+    } else {
+      let userId = await addUser(req.body);
+      res.json({ id: userId });
+    }
   } catch (error) {
     res.json({ message: error.message });
   }
