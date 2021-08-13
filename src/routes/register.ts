@@ -1,10 +1,6 @@
 import { Router } from 'express';
-import {
-  registerSchema,
-  isImage,
-  resizeSaveImage,
-  NO_IMAGE,
-} from '../validation';
+import { registerSchema, isImage, NO_IMAGE } from '../validation';
+import { resizeSaveImage } from '../converting';
 import multer from 'multer';
 import shortid from 'shortid';
 import { addUser, userExist } from '../db';
